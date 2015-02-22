@@ -4,6 +4,7 @@
 #
 
 import psycopg2
+import bleach
 
 
 def connect():
@@ -51,8 +52,10 @@ def registerPlayer(name):
     """
     DB = connect()
     c = DB.cursor()
+    # Clean the name provided by the user to protect against SQL injection attacks
+    bleached_name = bleach.clean(name)
     # A simple query to insert a new player into the players table; aside from the name, all value are auto-populated by the table
-    c.execute("INSERT INTO players (name) VALUES (%s)", (name,))
+    c.execute("INSERT INTO players (name) VALUES (%s)", (bleached_name,))
     DB.commit()
     DB.close()
 
